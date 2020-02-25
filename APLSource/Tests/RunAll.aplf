@@ -1,18 +1,20 @@
- RunAll←{
-     ⍝. This function runs all functions beginning with the word 'Test' in the APLSource/Tests folder
-     ⍝. Case sensitive 'Test' must be the first word of your test function in order to be executed by this function
+res←RunAll arg;status;statusCodes;Tests
+    ⍝. This function runs all functions beginning with the word 'Test' in the APLSource/Tests folder
+    ⍝. Case sensitive 'Test' must be the first word of your test function in order to be executed by this function
 
-     ⍝. Set arguments to TestConfig
-     ⎕←'Testing large output file requires WS>8G.'
-     ⎕←'Setting this flag to 1 will test 1 million x 4 cells output.'
-     TestLargeFile←0
+    ⍝. Set arguments to Config namespace
+    ⎕←'Testing large output file requires WS>8G.'
+    ⎕←'Setting ''#.Tests.Config.TestOutputFile←1'' will test 1 million x 4 cells output.'
 
-     ⍝. Config settings for future tests should go here
-     ⍝...
-     TestConfig←''TestLargeFile'' '' '' ⍝ this must match arguments to functions in the order of Tests.⎕NL¯3
+    ⍝. If non-existent, set up a namespace for holding test configuration, adding certain defaults
+    :If (0=⎕NC'#.Tests.Config')
+        #.Tests.Config←⎕NS''
+        #.Tests.Config.TestOutputFile←0
+    :EndIf
 
-     statusCodes←1-⍳4
-     status←'PASS' 'FAIL' 'DIDNTRUN' 'ERROR'
-     Tests←(⊂'Test'){⍵/⍨⍺{⍺≡4↑⍵}¨⍵}⎕NL ¯3
-     Tests,⍪{{⍺,≢⍵}⌸,status[statusCodes⍳⍵]}¨(TestConfig↑⍨≢Tests){(⍎⍵)⍺}¨Tests
- }
+    ⍝. Run all tests declared, collecting the statuses
+    statusCodes←1-⍳4
+    status←'PASS' 'FAIL' 'DIDNTRUN' 'ERROR'
+    Tests←(⊂'Test'){⍵/⍨⍺{⍺≡4↑⍵}¨⍵}#.Tests.⎕NL ¯3
+
+    res←Tests,⍪{{⍺,≢⍵}⌸,status[statusCodes⍳⍵]}¨Run¨Tests

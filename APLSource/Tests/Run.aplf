@@ -1,0 +1,10 @@
+∇r←Run f;a
+
+  a←''
+  :If (0<⎕NC'#.Tests.Config.',f)
+
+    a←⍎'#.Tests.Config.',f
+  :EndIf
+
+  r←(⍎'#.Tests.',f)a
+∇
