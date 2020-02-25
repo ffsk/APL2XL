@@ -12,6 +12,7 @@
 
     :Case 'Lin'
         ⍝ Further differentiate a Linux system
+        ⍝ TODO: Find a way to implement the 'uname'-provided functionality in APL.
         :Select 4↑⊃⎕SH'uname -a'
         :Case 'armv'
             ⍝ Assume 'armv' to be RaspberryPI
@@ -19,7 +20,8 @@
 
         :Else
             ⍝ Linux in general otherwise
-            ⍝ Returns the '<OS>-<Compiler>' combination (in most cases: 'linux-gnu')
+            ⍝ Returns the '<OS>-<Compiler-Suite>' combination (in most cases: 'linux-gnu')
+            ⍝ TODO: At very least, perform the corresponding 'tr' + 'sed' functionality in APL.
             opsys←⎕SH'uname -o |tr "A-Z" "a-z" |sed -E ''s!([^/]+)/(.+)$!\2-\1!'''
         :EndSelect
 

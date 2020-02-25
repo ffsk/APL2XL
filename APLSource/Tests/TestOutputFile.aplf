@@ -1,4 +1,5 @@
  TestOutputFile←{
+     ⍝ TODO: Make `ValidateBasic` run in Linux/MacOS
      ValidateBasic←{
          filename←Utility.BasicWS(size←100)
          test←{
@@ -12,6 +13,7 @@
          (test Utility.OLEController)filename
      }
 
+     ⍝ TODO: Make `ValidateChess` run in Linux/MacOS
      ValidateChess←{
          filename←##.Demos.Chess''
          test←{
@@ -27,6 +29,7 @@
          (test Utility.OLEController)filename
      }
 
+     ⍝ TODO: Make `ValidateMonths` run in Linux/MacOS
      ValidateMonths←{
          filename←##.Demos.MonthlyCalendars''
          test←{
@@ -40,6 +43,8 @@
          }
          (test Utility.OLEController)filename
      }
+
+     ⍝ TODO: Make `ValidateLarge` run in Linux/MacOS
      ValidateLarge←{
          DIDNTRUN←¯1
          ~⍵:DIDNTRUN ⍝ selected by user

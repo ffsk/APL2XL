@@ -5,4 +5,5 @@
      r←test args
  :Else
      r←¯2
+     ⎕←timestamp∊'Test failed: ',(∊#.Main.Utility.intersperse(⊂' > ')(⌽⎕SI)),': ',⎕DM[1]
  :EndTrap

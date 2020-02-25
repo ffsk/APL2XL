@@ -78,6 +78,7 @@
 
 
     ⍝ Fields:
+    ⍝ TODO: Do we really need the UUID to be hard-coded or can we generate them, thus turning them inta a template parameter?
     extlst ←'<extLst>'
     extlst,←' <ext uri="{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main">'
     extlst,←'  <x14:slicerStyles defaultSlicerStyle="SlicerStyleLight1"/>'
@@ -100,10 +101,11 @@
     st_hdr,←'{body}'
     st_hdr,←'</styleSheet>'
 
-    xmls⍪←'st_hdr' st_hdr ⍬
+    xmls⍪←'st_hdr' st_hdr (⊂'body')
 
 
     ⍝ Fields:
+    ⍝ TODO: Do we really need the UUID to be hard-coded or can we generate them, thus turning them inta a template parameter?
     theme ←'<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office Theme">'
     theme,←'<a:themeElements>'
     theme,←' <a:clrScheme name="Office">'
@@ -378,8 +380,25 @@
     xmls⍪←'theme' theme ⍬
 
 
+    ⍝ Fields: 'body'
+    wb ←'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"'
+    wb,←' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"'
+    wb,←' xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"'
+    wb,←' mc:Ignorable="x15 xr xr6 xr10 xr2"'
+    wb,←' xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main"'
+    wb,←' xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision"'
+    wb,←' xmlns:xr6="http://schemas.microsoft.com/office/spreadsheetml/2016/revision6"'
+    wb,←' xmlns:xr10="http://schemas.microsoft.com/office/spreadsheetml/2016/revision10"'
+    wb,←' xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2">'
+    wb,←'{body}'
+    wb,←'</workbook>'
+
+    xmls⍪←'wb' wb (⊂'body')
+
+
     ⍝ Fields: 'appVersion'
     ⍝ docProps/custom.xml
+    ⍝ TODO: Do we really need the UUID to be hard-coded or can we generate them, thus turning them inta a template parameter?
     dp_cust ←' <?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
     dp_cust,←' <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties"'
     dp_cust,←'          xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">'
@@ -393,30 +412,20 @@
     xmls⍪←'dp_cust' dp_cust (⊂'appVersion')
 
 
-    ⍝ Retrieve the XML, substituting any given template parameters
+    ⍝ Take the list of triples appart, keep the keys in a hash-table and the parametecs and XML in regular arrays.
     xn←1↑⍴xmls ⋄ xk←(xmls[;0])∘⍳ ⋄ xv←xmls[;1] ⋄ xp←xmls[;2]
 
-    cut←{(~⍵∊⍺)⊆⍵}
+    ⍝ Fetch the XML template, if any.
+    get←{n←xk⊂⍵ ⋄ n=xn:⍬ ⋄ v←xv[n]}
 
-    get←{n←xk⊂⍵ ⋄ n=xn:⍬ ⋄ v←xv[n]}  ⍝ Fetch the XML template, if any.
-    getp←{n←xk⊂⍵ ⋄ n=xn:⍬ ⋄ v←xp[n]}  ⍝ Fetch the template parameters, if any.
+    ⍝ Fetch the template parameters, if any.
+    getp←{n←xk⊂⍵ ⋄ n=xn:⍬ ⋄ v←xp[n]}
 
-    ⍝ getWith←{
-    ⍝     ⍺←1 2⍴⊂⍬
-    ⍝     nbr←1↑⍴⍺ ⋄ keys←(⍺[;0])∘⍳ ⋄ vals←⍺[;1]
-    ⍝     g←{n←keys⊂⍵ ⋄ n=nbr:⍬ ⋄ vals[n]}
-    ⍝     p←⊃getp⍵
-    ⍝     ∊{~(⊂⍵)∊p:⍵ ⋄ v←⊃g⍵ ⋄ v≡⍬:'{',⍵,'}' ⋄ v}¨∪('{}')cut ⊃get⍵
-    ⍝ }
-
-      getWith←{
-          ⍝⍺←1 2⍴⊂⍬ ⋄ (1 2⍴⊂⍬)≡⍺:⊃get⍵
-          ⍝keys←{'{',⍵,'}'}¨(⍺[;0]) ⋄ vals←⍺[;1] ⋄ (keys ⎕R vals) ⊃get⍵
-          ⍺←⍬ ⋄ ⍬≡⍺:⊃get ⍵
-          ⍝2=⍴⍺:keys vals←⍺ ⋄ keys vals←↓⍉↑⍺
-          keys vals←↓⍉↑⍺ ⋄ keys←{'{',⍵,'}'}¨keys
-          (keys ⎕R vals)⊃get ⍵
-      }
-
+    ⍝ Retrieve the XML, substituting any given template parameters
+    getWith←{
+        ⍺←⍬ ⋄ ⍬≡⍺:⊃get ⍵
+        keys vals←↓⍉↑⍺ ⋄ keys←{'{',⍵,'}'}¨keys
+        (keys ⎕R vals)⊃get ⍵
+    }
 
 :EndNamespace  ⍝ xmls

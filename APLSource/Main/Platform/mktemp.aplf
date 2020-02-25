@@ -12,8 +12,9 @@
      :Case 'Win'
          ⍝ TODO: Look for an atomic, collision-fee way of creating a temporary directory.
 
-         ⍝ For now, we emulate the 'mktemp' functionality by producing a sequence of random characters to replace the 'X' in the tmpl
-         fn←∊td,'/',((n⍴'X')⎕R((⎕D,⎕A,819⌶⎕A)[?8⍴62]))tmpl
+         ⍝ For now, we emulate the 'mktemp' functionality by producing a sequence of
+         ⍝ random characters to replace the 'X' in the tmpl
+         fn←∊td,'/',((n⍴'X')⎕R((⎕D,⎕A,819⌶⎕A)[?n⍴62]))tmpl
          :If ~ 1 ⎕MKDIR fn
              
              ('Cannot create temporary directory: ',fn)⎕SIGNAL 11
@@ -23,7 +24,7 @@
          ⍝ TODO: Find an alternative to invoking the 'mktemp' external process.
          ⍝ TODO: In addition, make sure this works for the RaspberryPi as well.
 
-         ⍝ Count the number of 'X' in the template
+         ⍝ For `mktemp`'s sake, ensure to have at least 3 'X' in the file name template
          :If 3>n
              'The template name must have at least 3 consecutive ''X''.'⎕SIGNAL 11
          :EndIf
