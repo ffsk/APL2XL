@@ -1,5 +1,33 @@
- zpath←temp Zip target;⎕USING;delete;name;path
+ zpath←temp Zip target;⎕USING;file
 ⍝. This function zips the temp directory as target,'.xlsx'
-⍝. This is the only file that contains an external dependency of the .NET zip.dll
- ⎕USING←',System.IO.Compression.DLL' ',System.IO.Compression.FileSystem.DLL'
- System.IO.Compression.ZipFile.CreateFromDirectory temp (outputFile,'.xlsx')
+
+ file←target,'.xlsx'
+ :Select ##.Platform.os ⍬
+
+⍝ In Windows, this file depends on the external .NET zip.dll
+ :Case 'Windows'
+     ⎕USING←',System.IO.Compression.DLL' ',System.IO.Compression.FileSystem.DLL'
+     System.IO.Compression.ZipFile.CreateFromDirectory temp file
+
+ :Else
+     :Select ⍎2↑∊1⌷'.'⎕WG'APLVERSION'
+
+     ⍝ Starting in 18.0, .NET Core is available in Linux and MacOS
+     :Case 18
+         ⎕USING←',System.IO.Compression.DLL' ',System.IO.Compression.FileSystem.DLL'
+         System.IO.Compression.ZipFile.CreateFromDirectory temp file
+
+     ⍝ Otherwise, use either 'libzip' or 'zip' for creating the Zip file.
+     :Else
+         ⍝ Note: The project intends to have no extenal dependencies other than .NET, thus making it impossible to run
+         ⍝       in Dyalog-17.1 for Linux and MacOS. The code below introduces a dependency to either the 'libzip'
+         ⍝       external library or the 'zip' command. Either way it allows the code to run in 17.1 for platforms other
+         ⍝       than Windows.
+         ⍝createFromDirectory temp file             ⍝ TODO: finish this function, using the 'libzip' shared library.
+         ⎕SH∊'cd ',temp,' && zip -q -r ',file,' .'  ⍝ In lieu of the above, use InfoZIP's 'zip' binary.
+
+     :EndSelect
+ :EndSelect
+
+ ⍝ Return the resulting file name
+ zpath←∊target,'.xlsx'

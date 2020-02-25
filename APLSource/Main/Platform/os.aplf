@@ -1,0 +1,28 @@
+ opsys←os _opsys
+    ⍝ What OS are we running on?
+    :Select ⊢_opsys←3↑⊃'.'⎕WG'APLversion'
+    :Case 'AIX'
+        opsys←'AIX'
+
+    :Case 'Mac'
+        opsys←'MacOS'
+
+    :Case 'Win'
+        opsys←'Windows'
+
+    :Case 'Lin'
+        ⍝ Further differentiate a Linux system
+        :Select 4↑⊃⎕SH'uname -a'
+        :Case 'armv'
+            ⍝ Assume 'armv' to be RaspberryPI
+            opsys←'RaspberryPi'
+
+        :Else
+            ⍝ Linux in general otherwise
+            ⍝ Returns the '<OS>-<Compiler>' combination (in most cases: 'linux-gnu')
+            opsys←⎕SH'uname -o |tr "A-Z" "a-z" |sed -E ''s!([^/]+)/(.+)$!\2-\1!'''
+        :EndSelect
+
+    :Else
+        ('Unknown operating system: ',_opsys)⎕SIGNAL 11
+ :EndSelect
