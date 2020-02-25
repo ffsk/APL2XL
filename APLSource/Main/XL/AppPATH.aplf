@@ -1,5 +1,5 @@
 AppPATH←{
   ⍝. ⍵ ←→ workbook
   ⍝. Returns: the path to app.xml file
-  'docProps/app.xml'
+  ##.Templates.Paths.get'app'
 }

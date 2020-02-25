@@ -1,5 +1,5 @@
 CorePATH←{
   ⍝. ⍵ ←→ workbook
   ⍝. Returns: filename and path to core.xml
-  'docProps/core.xml'
+  ##.Templates.Paths.get'core'
 }

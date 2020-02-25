@@ -1,0 +1,24 @@
+:Namespace Paths
+
+    paths ←1 2⍴'app'     'docProps/app.xml'            ⍝. Path to app.xml file
+    paths⍪←'core'        'docProps/core.xml'           ⍝. Path to core.xml
+    paths⍪←'CT'          '[Content_Types].xml'         ⍝. Filename for content types xml file
+    paths⍪←'RR'          '_rels/.rels'                 ⍝. Path to the rels file
+    paths⍪←'RW'          'xl/_rels/workbook.xml.rels'  ⍝. path to the workbook relationship file
+    paths⍪←'SS'          'xl/sharedStrings.xml'        ⍝. Path to shared strings file
+    paths⍪←'style'       'xl/styles.xml'               ⍝. Path to styles xml file
+    paths⍪←'theme'       'xl/theme/theme1.xml'         ⍝. Path to a default theme file
+    paths⍪←'WB'          'xl/workbook.xml'             ⍝. Path to the workbook xml file
+    paths⍪←'WS'          'xl/worksheets/sheet{}.xml'   
+    paths⍪←'CT.PartName' 'xl/worksheets/sheet{}.xml' 
+
+    npaths←1↑⍴paths
+    keys←(paths[;0])∘⍳
+    vals← paths[;1]
+
+    get←{
+        n←keys⊂⍵
+        n=npaths:⍬
+        vals[n]
+    }
+:EndNamespace  ⍝ Paths

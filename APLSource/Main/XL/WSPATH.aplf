@@ -1,4 +1,4 @@
 WSPATH←{
   ⍝. ⍵ ←→ workbook namespace
-  {(⊂⍵)S'xl/worksheets/sheet{}.xml'}∘⍕¨1+⍳≢WSNames ⍵
+  {(⊂⍵)S ∊##.Templates.Paths.get'WS'}∘⍕¨1+⍳≢WSNames ⍵
 }

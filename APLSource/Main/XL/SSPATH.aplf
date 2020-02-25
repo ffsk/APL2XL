@@ -1,4 +1,4 @@
 SSPATH←{
   ⍝. Path to shared strings file
-  'xl/sharedStrings.xml'
+  ##.Templates.Paths.get'SS'
 }

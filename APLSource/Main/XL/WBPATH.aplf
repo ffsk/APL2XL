@@ -1,4 +1,4 @@
 WBPATH←{
   ⍝. Path to the workbook xml file
-  'xl/workbook.xml'
+  ##.Templates.Paths.get'WB'
 }

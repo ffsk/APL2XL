@@ -93,12 +93,9 @@
      dxfs←'<dxfs count="0"/>'                           ⍝TODO: implement
 
      ⍝ TODO: implement
-     extLst←'<extLst> <ext uri="{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"> <x14:slicerStyles defaultSlicerStyle="SlicerStyleLight1"/> </ext> <ext uri="{9260A510-F301-46a8-8635-F512D64BE5F5}" xmlns:x15="http://schemas.microsoft.com/office/spreadsheetml/2010/11/main"> <x15:timelineStyles defaultTimelineStyle="TimeSlicerStyleLight1"/> </ext> </extLst>'
+     extLst←#.Main.Templates.xmls.getWith'extlst'
 
      ⍝. Header is (currently) static, only the body is generated
-     xmlHeader←'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac x16r2 xr" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac" xmlns:x16r2="http://schemas.microsoft.com/office/spreadsheetml/2015/02/main" xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision">'
-     body←numFmts fonts fills borders cellStyleXfs cellXfs cellStyles dxfs tableStyles extLst
-     xmlClose←'</styleSheet>'
-
-     ∊xmlHeader body xmlClose
+     env←(⍬),(⊂'body' (∊numFmts fonts fills borders cellStyleXfs cellXfs cellStyles dxfs tableStyles extLst))
+     env#.Main.Templates.xmls.getWith'st_hdr'
  }

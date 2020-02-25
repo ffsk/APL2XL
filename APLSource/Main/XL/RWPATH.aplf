@@ -1,4 +1,4 @@
 RWPATH←{
   ⍝. Path to the workbook relationship file
-  'xl/_rels/workbook.xml.rels'
+  ##.Templates.Paths.get'RW'
 }

@@ -1,5 +1,5 @@
 CTPATH←{
   ⍝. ⍵ ←→ workbook
   ⍝. Returns: filename for content types xml file
-  '[Content_Types].xml'
+  ##.Templates.Paths.get'CT'
 }

@@ -1,4 +1,4 @@
 StylePATH←{
   ⍝. Path to styles xml file
-  'xl/styles.xml'
+  ##.Templates.Paths.get'style'
 }
