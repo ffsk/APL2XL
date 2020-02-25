@@ -1,32 +1,35 @@
- name←CompileXML wb;outputFile;header;ap;ax;cp;cx;ctp;ctx;rrp;rrx;rwp;rwx;ssp;ssx;wbp;wbx;wsp;wsx;paths;xmls;p;x;output;stylep;stylex;temp_excel_directory;step
+ name←CompileXML wb;outputFile;step;tempFolder;header;ap;ax;cp;cx;ctp;ctx;rrp;rrx;rwp;rwx;ssp;ssx;wbp;wbx;stylep;stylex;wsp;wsx;paths;xmls;p;x;outputXML
 ⍝. wb is an instance of ##.XL.WB namespace containing all the collections required to populate a workbook
-⍝. This Function calls all XML generating functions,
-⍝. creates the directory structure required for a .xlsx file,
-⍝. and zips the folder to create an Excel workbook
+⍝. This Function:
+⍝.  1. calls all XML generating functions,
+⍝.  2. creates the directory structure required for a .xlsx file,
+⍝.  3. and zips the folder to create an Excel workbook
 
  name←wb.Name
  outputFile←∊¯1↓1 ⎕NPARTS wb.Name  ⍝ output file without extension, if any. correct extension added in Zip
- header←'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
- temp_excel_directory←(739⌶0),'/temp_excel_directory'
 
- ⍝. Validation: If any error occurs, exit to the top of Main.Export
+⍝. Validation: If any error occurs, exit to the top of Main.Export
  :Trap 0
+     ⍝. Atomically create a unique temporary directory, named after the provided template, and returning its name.
      step←'creating temp folder'
-     CreateXLSXDirectory temp_excel_directory 
+     tempFolder←##.Platform.mktemp'apl2xl-XXXXXXXX'
+
+     ⍝. Populate the sub-folders within tempFolder
+     step←'creating temp sub-folders'
+     CreateXLSXDirectory tempFolder
 
      :If wb.ShouldDelete
          step←'deleting existing file'
          _←3 ⎕NDELETE outputFile,'.xlsx'
      :EndIf
-
-     step←'creating output file'
-     ⎕MKDIR outputFile,'.xlsx'
-     3 ⎕NDELETE outputFile,'.xlsx'
  :Else
+     ⍝_←3 ⎕NDELETE tempFolder  ⍝ Keep so we can look at it for now...
      ('Error ',step,': ',⎕DMX.(Message,' ',,⍕OSError))⎕SIGNAL 777
  :EndTrap
 
- ⍝. The following code compiles the XML from each collection and generates the filename into which the XML is written
+⍝.The following code compiles the XML from each collection and generates the filename into which the XML is written
+ header←'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+
  ap←##.XL.AppPATH wb
  ax←##.XL.AppXML wb
 
@@ -55,15 +58,15 @@
  wsx←##.XL.WSXML wb
 
  paths←ap cp ctp rrp rwp ssp stylep wbp wsp
- xmls ←ax cx ctx rrx rwx ssx stylex wbx wsx
+ xmls←ax cx ctx rrx rwx ssx stylex wbx wsx
 
 ⍝. Combine the paths with the XML, and output XML to each path
  p x←{⊃,/⊆¨⍵}¨paths xmls
  outputXML←⍉↑p({header ⍵}¨x)
 
-⍝. Write the output to the paths inside of the correct XLSX directory structure, and Zip to outputFile 
- temp_excel_directory WriteXML⍤1⊢outputXML
- temp_excel_directory Zip outputFile
+⍝. Write the output to the paths inside of the correct XLSX directory structure, and Zip to outputFile
+ tempFolder WriteXML⍤1⊢outputXML
+ tempFolder Zip outputFile
 
-⍝. This deletes a folder known to be created by this program. Safe to delete
- _←3 ⎕NDELETE temp_excel_directory
+⍝. Deletes the temporary working directory.
+ _←3 ⎕NDELETE tempFolder
