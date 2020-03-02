@@ -14,8 +14,8 @@
 
      ⍝ Starting in 18.0, .NET Core is available in Linux and MacOS
      :Case 18
-         ⎕USING←',System.IO.Compression.DLL' ',System.IO.Compression.FileSystem.DLL'
-         System.IO.Compression.ZipFile.CreateFromDirectory temp file
+         ⎕using←(⊂''),⊂'System.IO,System.IO.Compression,System.IO.Compression.ZipFile'
+         System.IO.Compression.ZipFile.CreateFromDirectory (∊temp) file
 
      ⍝ Otherwise, use either 'libzip' or 'zip' for creating the Zip file.
      :Else
