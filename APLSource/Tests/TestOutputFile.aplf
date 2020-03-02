@@ -6,7 +6,7 @@
              wb←⍵
              sheetCount←1≡wb.Sheets.Count
              names←(1⍴⊂'Data')≡Utility.OLESheets ⍵
-             c1←(,0)≡wb.ActiveSheet Utility.OLERange'B2'
+             c1←(,0)≡,⍎wb.ActiveSheet Utility.OLERange'B2'
              c2←(1⍴⊂'ABC')≡wb.ActiveSheet Utility.OLERange'E2'
              ∧/names sheetCount c1 c2
          }

@@ -1,8 +1,25 @@
-OLERange←{
-  ⍝. ⍵ ←→ charvector of the following format
+ r←(dat OLERange)rng;p;de;se;sc;nc;sr;nr
+  ⍝. rng ←→ charvector of the following format
   ⍝. '{cellColumn}{rowNumber}' or '{col}{row}:{col}{row}'
   ⍝. Ex. 'A1' ⋄ 'A1:G12' ⋄ 'G16:CC471'
   ⍝. Return the values in those cells
-  r←(,⍺).{Range[⊂⍵]}⊂⍵
-  r.{0::0 0⍴0 ⋄ Value2}0
-}
+ p←'-64'~⍨⊃# ⎕WG'APLVersion'
+ :Select p
+
+ :Case 'Windows'
+     r←(,dat).{Range[⊂rng]}⊂rng
+     r.{0::0 0⍴0 ⋄ Value2}0
+
+ :Case 'Linux'
+     de←⍴dat
+     se←{#.Main.XL.cti ⍵}¨':'#.Main.Utility.cut rng
+     :If 1=⍴se
+         r←dat[se]
+     :Else
+         (sr sc)(er ec)←se ⋄ nr←er-sr ⋄ nc←ec-sc
+         r←dat[⎕IO+sr+⍳nr;⎕IO+sc+⍳nc]
+     :EndIf
+
+ :Else
+     ('Unsupported platform: ''',p,'''')⎕SIGNAL 11
+ :EndSelect

@@ -1,0 +1,119 @@
+:Namespace xlsx
+
+    ⍝ Note: This is an attemp to work around the the fact that there is not OLE Automation in platforms other than Windows.
+    ⍝ TODO: Either document or automate building the `libxlsxio_read` used below for reading '.xlsx' files in Linux
+    ⍝ TODO: The library however, has issues reading UTF-8 characters, find a way to fix it or find a better library
+
+    ⍝ Functions from `libc`
+    ⎕NA'libc.so.6|free P'
+
+    ⍝ Interpreter's data marshalling functions ⍝/opt/dyalog-17.1/lib
+    'strlen' ⎕NA'P dyalog64.so|STRLEN P'
+    'strncpy'⎕NA  'dyalog64.so|STRNCPY >T1[] P U4'
+    'memcpy' ⎕NA  'dyalog64.so|MEMCPY >T1[] P P'
+
+    ⍝ Functions to read a `.xlsx` file in Linux  ⍝/opt/xlsxio-0.2.21/lib
+    'xlsx_open'           ⎕NA'P libxlsxio_read.so|xlsxioread_open <0C'
+    'xlsx_close'          ⎕NA  'libxlsxio_read.so|xlsxioread_close P'
+    'xlsx_sheetlist_open' ⎕NA'P libxlsxio_read.so|xlsxioread_sheetlist_open P'
+    'xlsx_sheetlist_next' ⎕NA'P libxlsxio_read.so|xlsxioread_sheetlist_next P'
+    'xlsx_sheetlist_close'⎕NA  'libxlsxio_read.so|xlsxioread_sheetlist_close P'
+    'xlsx_sheet_open'     ⎕NA'P libxlsxio_read.so|xlsxioread_sheet_open P <0C U4'
+    'xlsx_sheet_next_row' ⎕NA'P libxlsxio_read.so|xlsxioread_sheet_next_row P'
+    'xlsx_sheet_next_cell'⎕NA'P libxlsxio_read.so|xlsxioread_sheet_next_cell P'
+    'xlsx_sheet_close'    ⎕NA  'libxlsxio_read.so|xlsxioread_sheet_close P'
+
+
+    ∇ {res}←open fn;p
+      ⍝ Open the .xlsx file, returning a native pointer in case of success, a signal 11 otherwise.
+      :If 0=⊢p←xlsx_open⊂fn
+     
+          ('Error opening .xlsx file: ''',fn,'''')⎕SIGNAL 11
+     
+      :EndIf
+      res←p
+    ∇
+
+    ∇ close ptr
+      ⍝ Close the previously opened .xlsx file, freeing up opened resources.
+      :If 0≠ptr
+     
+          _←xlsx_close ptr
+     
+      :EndIf
+    ∇
+
+    ∇ res←get_sheet_names ptr;lstp;nmp;l;nm
+      ⍝ Create an iterator for enumerating the sheets in the workbook
+      res←⍬
+      :If 0≠⊢lstp←xlsx_sheetlist_open ptr
+     
+          :While 0≠⊢nmp←xlsx_sheetlist_next lstp
+     
+              nm←strncpy l nmp(l←strlen nmp)
+              res,←⊂nm
+     
+          :EndWhile
+     
+          _←xlsx_sheetlist_close lstp
+      :EndIf
+    ∇
+
+    ∇ {res}←open_sheet(ptr name flags);p
+      ⍝ Open the named sheet from the workbook
+      :If 0≠ptr
+      :AndIf 0>⍴name
+          :If 0=⊢p←xlsx_sheet_open ptr name flags
+     
+              ('Error opening sheet: ''',name,'''')⎕SIGNAL 11
+     
+          :EndIf
+          res←p
+      :EndIf
+    ∇
+
+    ∇ close_sheet ptr
+      ⍝ Close the previously opened workbook sheet.
+      :If 0≠ptr
+     
+          _←xlsx_sheet_close ptr
+     
+      :EndIf
+    ∇
+
+    ∇ res←get_sheet(ptr name flags);sheetp;rows;rowp;row;cellp;l;cell;r;c
+      ⍝ Open the named sheet from the workbook
+      res←⍬
+      :If 0≠ptr
+      :AndIf 0<⍴name
+      :AndIf 0≠⊢sheetp←xlsx_sheet_open ptr name flags
+     
+          ⍝ Fetch and append each row to `res`
+          rows←⍬
+          :While 0≠⊢rowp←xlsx_sheet_next_row sheetp
+     
+              ⍝ Fetch and append each cell to `row`
+              row←⍬
+              :While 0≠⊢cellp←xlsx_sheet_next_cell sheetp
+     
+                  cell←strncpy l cellp(l←strlen cellp)
+                  row,←⊂cell
+     
+              :EndWhile
+     
+              rows,←⊂row
+          :EndWhile
+     
+          xlsx_sheet_close sheetp
+
+          ⍝ Appends nulls for rows with lower number of columns
+          r←⍴rows ⋄ c←⊃⌈/⍴¨rows
+          null←c⍴⎕NULL
+          rows←{n←⍴⍵ ⋄ r←c-n ⋄ 0<r:⍵,r↑null ⋄ ⍵}¨rows
+
+          res←(r,c)⍴⊃,/rows
+          ⍝res←⍪rows
+      :EndIf
+    ∇
+
+:EndNamespace  ⍝ xlsx

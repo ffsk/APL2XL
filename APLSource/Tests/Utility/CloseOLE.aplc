@@ -7,12 +7,27 @@
 :Implements Constructor
 :Access public
   XL←xl
-
 ∇
+
 ∇Kill 
 :Implements Destructor
-  :If 0 ≢ XL.ActiveWorkbook
-    XL.ActiveWorkbook.Close ⍬
-  :EndIf
+  :Select ⊢p←'-64'~⍨⊃# ⎕WG'APLVersion'
+
+  ⍝ Use OLE Automation in Windows
+  :Case 'Windows'
+      :If 0 ≢ XL.ActiveWorkbook
+          XL.ActiveWorkbook.Close ⍬
+      :EndIf
+
+  ⍝ Use `xlsxio` in Linux
+  :Case 'Linux'
+      :If 0≠XL
+          #.Main.Platform.xlsx.close XL
+          XL←0
+      :EndIf
+
+  :Else
+      ('Unsupported platform: ''',p,'''')⎕Signal 11
+  :EndSelect
 ∇
 :EndClass
