@@ -4,17 +4,17 @@ res←RunAll arg;status;statusCodes;Tests
 
     ⍝. Set arguments to Config namespace
     ⎕←'Testing large output file requires WS>8G.'
-    ⎕←'Setting ''#.Tests.Config.TestOutputFile←1'' will test 1 million x 4 cells output.'
+    ⎕←'Setting ''##.Tests.Config.TestOutputFile←1'' will test 1 million x 4 cells output.'
 
     ⍝. If non-existent, set up a namespace for holding test configuration, adding certain defaults
-    :If (0=⎕NC'#.Tests.Config')
-        #.Tests.Config←⎕NS''
-        #.Tests.Config.TestOutputFile←0
+    :If (0=⎕NC'##.Tests.Config')
+        ##.Tests.Config←⎕NS''
+        ##.Tests.Config.TestOutputFile←0
     :EndIf
 
     ⍝. Run all tests declared, collecting the statuses
     statusCodes←1-⍳4
     status←'PASS' 'FAIL' 'DIDNTRUN' 'ERROR'
-    Tests←(⊂'Test'){⍵/⍨⍺{⍺≡4↑⍵}¨⍵}#.Tests.⎕NL ¯3
+    Tests←(⊂'Test'){⍵/⍨⍺{⍺≡4↑⍵}¨⍵}##.Tests.⎕NL ¯3
 
     res←Tests,⍪{{⍺,≢⍵}⌸,status[statusCodes⍳⍵]}¨Run¨Tests

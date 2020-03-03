@@ -424,7 +424,7 @@
     ⍝ Retrieve the XML, substituting any given template parameters
     getWith←{
         ⍺←⍬ ⋄ ⍬≡⍺:⊃get ⍵
-        keys vals←↓⍉↑⍺ ⋄ keys←{'{',⍵,'}'}¨keys
+        (keys vals)←↓⍉↑⍺ ⋄ keys←{'{',⍵,'}'}¨keys
         (keys ⎕R vals)⊃get ⍵
     }
 

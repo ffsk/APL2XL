@@ -3,17 +3,17 @@ res←Test_Templates_xml v;vars;parms;vals;ref
     res←⍬
 
     ⍝ Fetch a template and attempt to replace a template parameter with a matching name-value pair.
-    v←(⍬,⊂'rtype' 'RTYPE')#.Main.Templates.xmls.getWith'rwrel'
+    v←(⍬,⊂'rtype' 'RTYPE')##.Main.Templates.xmls.getWith'rwrel'
     res,←v≡'http://schemas.openxmlformats.org/officeDocument/2006/relationships/RTYPE'
 
 
     ⍝ Fetch a template and attempt to replace a template parameter without name-value pairs.
-    v←⍬ #.Main.Templates.xmls.getWith'rwrel'
+    v←⍬ ##.Main.Templates.xmls.getWith'rwrel'
     res,←v≡'http://schemas.openxmlformats.org/officeDocument/2006/relationships/{rtype}'
 
 
     ⍝ Fetch a template and attempt to replace a template parameter with a mismatching name-value pair.
-    v←(⍬,⊂'rwtype' 'RWTYPE')#.Main.Templates.xmls.getWith'rwrel'
+    v←(⍬,⊂'rwtype' 'RWTYPE')##.Main.Templates.xmls.getWith'rwrel'
     res,←v≡'http://schemas.openxmlformats.org/officeDocument/2006/relationships/{rtype}'
 
 
@@ -21,6 +21,6 @@ res←Test_Templates_xml v;vars;parms;vals;ref
 
     ⍝ 1. successfull case:
     vars←'application' 'count' 'tags' 'company' 'appVersion' ⋄ parms←{'{',⍵,'}'}¨vars ⋄ vals←{'val-',⍕⍵}¨⍳⍴vars
-    v←(↓⍉↑(vars vals))#.Main.Templates.xmls.getWith'app'
-    ref←(parms ⎕R vals)#.Main.Templates.xmls.app
+    v←(↓⍉↑(vars vals))##.Main.Templates.xmls.getWith'app'
+    ref←(parms ⎕R vals)##.Main.Templates.xmls.app
     res,←v≡ref

@@ -93,9 +93,9 @@
      dxfs←'<dxfs count="0"/>'                           ⍝TODO: implement
 
      ⍝ TODO: implement
-     extLst←#.Main.Templates.xmls.getWith'extlst'
+     extLst←##.Templates.xmls.getWith'extlst'
 
      ⍝. Header is (currently) static, only the body is generated
      env←(⍬),(⊂'body' (∊numFmts fonts fills borders cellStyleXfs cellXfs cellStyles dxfs tableStyles extLst))
-     env#.Main.Templates.xmls.getWith'st_hdr'
+     env##.Templates.xmls.getWith'st_hdr'
  }

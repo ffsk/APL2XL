@@ -1,6 +1,6 @@
  OLESheets←{
      ⍝. Return the names of all the worksheets
-     isLin←~'Windows'≡#.Main.Platform.os''
+     isLin←~'Windows'≡##.##.Main.Platform.os''
      ~isLin:(⍵.Sheets[1+⍳⍵.Sheets.Count]).Name
-     isLin:#.Main.Platform.xlsx.get_sheet_names ⍵.xlsx
+     isLin:##.##.Main.Platform.xlsx.get_sheet_names ⍵.xlsx
  }

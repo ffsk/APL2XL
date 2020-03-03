@@ -11,7 +11,7 @@ CTXML←{
     count←1+⍳≢WSNames ⍵
     overrides←generateSheetFileNames¨count
 
-    ⍝ A singleton name-value pair, needs to be prepended by `(⍬)` to preserve shape.
+    ⍝ A singleton name-value pair, needs to be prepended by '(⍬)' to preserve shape.
     env←(⍬),(⊂'overrides' (∊overrides))
-    env#.Main.Templates.xmls.getWith'CT'
+    env##.Templates.xmls.getWith'CT'
 }

@@ -3,11 +3,11 @@ CoreXML←{
   ⍝. Returns: xml for ./outputFile/docProps/core.xml
   ⍝⍝⍝ TODO: XML for core.xml is static, at present unsure of what ./docProps/core.xml contains that is dynamic
   nm←⎕AN
-  ts←¯1↓#.Tests.Utility.timestamp''
+  ts←¯1↓##.##.Tests.Utility.timestamp''
   env ←(⊂'creator'     nm)
   env,←(⊂'editor'      nm)
   env,←(⊂'createdUTC'  ts)
   env,←(⊂'modifiedUTC' ts)
-  env#.Main.Templates.xmls.getWith'core'
+  env##.Templates.xmls.getWith'core'
 }
 

@@ -1,10 +1,10 @@
 :Namespace xlsx
 
     ⍝ Note: This is an attemp to work around the the fact that there is not OLE Automation in platforms other than Windows.
-    ⍝ TODO: Either document or automate building the `libxlsxio_read` used below for reading '.xlsx' files in Linux
+    ⍝ TODO: Either document or automate building the 'libxlsxio_read' used below for reading '.xlsx' files in Linux
     ⍝ TODO: The library however, has issues reading UTF-8 characters, find a way to fix it or find a better library
 
-    ⍝ Functions from `libc`
+    ⍝ Functions from 'libc'
     ⎕NA'libc.so.6|free P'
 
     ⍝ Interpreter's data marshalling functions ⍝/opt/dyalog-17.1/lib
@@ -12,7 +12,7 @@
     'strncpy'⎕NA  'dyalog64.so|STRNCPY >T1[] P U4'
     'memcpy' ⎕NA  'dyalog64.so|MEMCPY >T1[] P P'
 
-    ⍝ Functions to read a `.xlsx` file in Linux  ⍝/opt/xlsxio-0.2.21/lib
+    ⍝ Functions to read a '.xlsx' file in Linux  ⍝/opt/xlsxio-0.2.21/lib
     'xlsx_open'           ⎕NA'P libxlsxio_read.so|xlsxioread_open <0C'
     'xlsx_close'          ⎕NA  'libxlsxio_read.so|xlsxioread_close P'
     'xlsx_sheetlist_open' ⎕NA'P libxlsxio_read.so|xlsxioread_sheetlist_open P'
@@ -81,18 +81,18 @@
       :EndIf
     ∇
 
-    ∇ res←get_sheet(ptr name flags);sheetp;rows;rowp;row;cellp;l;cell;r;c
+    ∇ res←get_sheet(ptr name flags);sheetp;rows;rowp;row;cellp;l;cell;nr;nc;mc;repl
       ⍝ Open the named sheet from the workbook
       res←⍬
       :If 0≠ptr
       :AndIf 0<⍴name
       :AndIf 0≠⊢sheetp←xlsx_sheet_open ptr name flags
      
-          ⍝ Fetch and append each row to `res`
+          ⍝ Fetch and append each row to 'res'
           rows←⍬
           :While 0≠⊢rowp←xlsx_sheet_next_row sheetp
      
-              ⍝ Fetch and append each cell to `row`
+              ⍝ Fetch and append each cell to 'row'
               row←⍬
               :While 0≠⊢cellp←xlsx_sheet_next_cell sheetp
      
@@ -101,18 +101,19 @@
      
               :EndWhile
      
-              rows,←⊂row
+              rows,←⊂row,⎕NULL
           :EndWhile
      
-          xlsx_sheet_close sheetp
+          _←xlsx_sheet_close sheetp
 
-          ⍝ Appends nulls for rows with lower number of columns
-          r←⍴rows ⋄ c←⊃⌈/⍴¨rows
-          null←c⍴⎕NULL
-          rows←{n←⍴⍵ ⋄ r←c-n ⋄ 0<r:⍵,r↑null ⋄ ⍵}¨rows
-
-          res←(r,c)⍴⊃,/rows
-          ⍝res←⍪rows
+          ⍝ Modify the rows as to have the same number of columns
+          nr←⍴rows
+          :If 0=nr
+            res←⍬
+          :Else
+            nc←¯1+∊⍴¨rows ⋄ mc←⌈/nc ⋄ repl←{(⍵⍴1),mc-⍵}¨nc
+            res←(nr,mc)⍴⊃⍪/repl/¨,rows
+          :EndIf
       :EndIf
     ∇
 

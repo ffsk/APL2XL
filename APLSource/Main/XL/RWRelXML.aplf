@@ -8,8 +8,8 @@
      (n rtype target)←⍵
      r←⊂'Relationship'
      id←'Id'('rId',n)
-     env←(⍬),(⊂'rtype'rtype)  ⍝ A singleton name-value pair, needs to be prepended by `(⍬)` to preserve shape.
-     type←'Type'(env #.Main.Templates.xmls.getWith'rwrel')
+     env←(⍬),(⊂'rtype'rtype)  ⍝ A singleton name-value pair, needs to be prepended by '(⍬)' to preserve shape.
+     type←'Type'(env ##.Templates.xmls.getWith'rwrel')
      file←'Target'target
      (r,⊂id type file)tag''
  }

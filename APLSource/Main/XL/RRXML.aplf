@@ -1,5 +1,5 @@
 RRXML←{
     ⍝. Returns: the xml for the ./outputFile/_rels/.rels file
     ⍝⍝⍝ TODO: Generate this file dynamically if necessary
-    #.Main.Templates.xmls.getWith'RR'
+    ##.Templates.xmls.getWith'RR'
 }

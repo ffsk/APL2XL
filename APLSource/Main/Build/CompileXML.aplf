@@ -61,7 +61,7 @@
  xmls←ax cx ctx rrx rwx ssx stylex wbx wsx
 
 ⍝. Combine the paths with the XML, and output XML to each path
- p x←{⊃,/⊆¨⍵}¨paths xmls
+ (p x)←{⊃,/⊆¨⍵}¨paths xmls
  outputXML←⍉↑p({header ⍵}¨x)
 
 ⍝. Write the output to the paths inside of the correct XLSX directory structure, and Zip to outputFile

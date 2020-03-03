@@ -13,5 +13,5 @@ AppXML←{
   env,←(⊂'tags'         tags)
   env,←(⊂'company'     'Dyalog Ltd.')
   env,←(⊂'appVersion'  '0.0.2')
-  env#.Main.Templates.xmls.getWith'app'
+  env##.Templates.xmls.getWith'app'
 }
