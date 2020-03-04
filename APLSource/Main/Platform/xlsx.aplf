@@ -81,7 +81,7 @@
       :EndIf
     ∇
 
-    ∇ res←get_sheet(ptr name flags);sheetp;rows;rowp;row;cellp;l;cell;nr;nc;mc;repl
+    ∇ res←get_sheet(ptr name flags);sheetp;rows;rowp;row;cellp;l;cell
       ⍝ Open the named sheet from the workbook
       res←⍬
       :If 0≠ptr
@@ -89,11 +89,11 @@
       :AndIf 0≠⊢sheetp←xlsx_sheet_open ptr name flags
      
           ⍝ Fetch and append each row to 'res'
-          rows←⍬
+          rows←⍬  ⍝1↓⎕null ⎕null  ⍝ A singleton list with '[null]' fill (need to drop the first row later)
           :While 0≠⊢rowp←xlsx_sheet_next_row sheetp
      
               ⍝ Fetch and append each cell to 'row'
-              row←⍬
+              row←1↓⎕null ⎕null  ⍝ A singleton list with '[null]' fill (need to drop the first column later)
               :While 0≠⊢cellp←xlsx_sheet_next_cell sheetp
      
                   cell←strncpy l cellp(l←strlen cellp)
@@ -101,18 +101,16 @@
      
               :EndWhile
      
-              rows,←⊂row,⎕NULL
+              rows,←⊂row
           :EndWhile
      
           _←xlsx_sheet_close sheetp
 
           ⍝ Modify the rows as to have the same number of columns
-          nr←⍴rows
-          :If 0=nr
+          :If 0=⍴rows
             res←⍬
           :Else
-            nc←¯1+∊⍴¨rows ⋄ mc←⌈/nc ⋄ repl←{(⍵⍴1),mc-⍵}¨nc
-            res←(nr,mc)⍴⊃⍪/repl/¨,rows
+            res←1↓[1]↑rows  ⍝ Mix in the '[null]' fills and drop the first column
           :EndIf
       :EndIf
     ∇
